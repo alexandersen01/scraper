@@ -122,6 +122,10 @@ if df['area'].min() < 10:
 df['price'] = df['price'].str.replace(' kr', '')
 df['price'] = df['price'].str.replace(' ', '')
 
+#remove rows with 'Video' or 'Visning' in city column
+df = df[~df['city'].str.contains('Video')]
+df = df[~df['city'].str.contains('Visning')]
+
 # Save df as csv with today's date:
 df.to_excel('price_data_norway_' + str(time.strftime("%Y%m%d")) + '.xlsx', index=False)
 
