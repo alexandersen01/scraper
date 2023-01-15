@@ -10,7 +10,8 @@ import folium.plugins
 url_lst = []
 '''creates a list of urls to scrape from'''
 
-for i in range (1, 15):
+## 1. Scrape real estate adds from Finn.no ##
+for i in range (1, 50):
     response = requests.get(f'https://www.finn.no/realestate/homes/search.html?page={i}&sort=PUBLISHED_DESC')
     soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -96,35 +97,35 @@ for url_i in range(len(url_lst)):
 
 
 '''clean data'''
-
+# Replace ' ' with ',' in 'address' column:
 df['address'] = df['address'].str.replace(',', ' ')
 
+# Extract postal code from address
 df['postal_code'] = df['address'].str.extract('(\d{4})')
 
+# Remove postal code from address
 try:
     df['address'] = df['address'].str.replace('\d{4}', '')
 except:
     pass
 
-
+# Extract city from address
 df['city'] = df['address'].apply(lambda x: x.split()[-2] + ' ' + x.split()[-1] if x.split()[-1] == 'N' or x.split()[-1] == 'S' else x.split()[-1])
 
-
+# Create list of unique cities
 city_list = df['city'].unique().tolist()
 
 '''remove city from address'''
-
+# Remove city from address
 df['address'] = df['address'].apply(lambda x: ' '.join(x.split()[:-2]) if x.split()[-1] == 'N' or x.split()[-1] == 'S' else ' '.join(x.split()[:-1]))
 
-
-#clean area column and keep just numbers
+# Clean area column and keep just numbers
 df['area'] = df['area'].str.replace(str(), '')
-
-
 
 # Delete rows in 'area' that dont contain numbers:
 df = df[df['area'].str.contains('\d')]
 
+# Remove '.' from 'area' column:
 try:
     df['area'] = df['area'].str.replace('\.', '')
 except:
@@ -158,10 +159,15 @@ df.apply(lambda row : folium.CircleMarker(location = [row['lat'], row['lon']]).a
 cluster = folium.plugins.MarkerCluster().add_to(map1)
 
 '''add info to popups on map'''
-
 for (index, row) in df.iterrows():
+
+    # Create details to be displayed in popup:
     iframe = folium.IFrame('Address: ' + str(row['address']) + '<br>' + 'Price: ' + str(row['price']) + ' kr' + '<br>' + 'Price per m2: ' + str(row['price_per_m2']) + ' kr' + '<br>' + 'Area: ' + str(row['area']) + '<br>' + 'Rooms: ' + str(row['rooms']) + '<br>' + 'Year: ' + str(row['year']) + '<br>' + 'Type: ' + str(row['type']) + '<br>' + 'URL: ' + str(row['url']) + '<br>' + 'Date fetched: ' + str(row['date']))
+    
+    # Create a popup for each marker on the map:
     popup = folium.Popup(iframe, min_width = 300, max_width = 400, min_height = 300, max_height = 400)
+
+    # Add marker to map:
     folium.Marker([row['lat'], row['lon']], popup = popup).add_to(cluster)
 
 #save map as html file with today's date
@@ -169,9 +175,22 @@ map1.save('map_' + str(time.strftime("%Y%m%d")) + '.html')
 
 print(df)
 
-# To do:
+## 2. Scrape rental data from Finn.no ##
 
+
+
+
+
+
+
+
+
+# To do:
 # 3. Add column with number of bathrooms
+# 4. Add story to map
+# 5. Add commute time to Nationaltheatret
+# 6. Add regression model to predict price
+# 7. Add average rent price in the postal code
 
 # Overall goal: 
 # Calculate estimated gross yield for each property 
