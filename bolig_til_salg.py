@@ -11,7 +11,7 @@ url_lst = []
 '''creates a list of urls to scrape from'''
 
 ## 1. Scrape real estate adds from Finn.no ##
-for i in range (1, 50):
+for i in range (1, 2):
     response = requests.get(f'https://www.finn.no/realestate/homes/search.html?page={i}&sort=PUBLISHED_DESC')
     soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -28,7 +28,7 @@ counter = 0
 
 '''create empty dataframe with specified columns '''
 
-df = pd.DataFrame(columns=['address', 'price', 'area', 'rooms', 'year', 'type', 'url', 'price_per_m2', 'lat', 'lon', 'date'])
+df = pd.DataFrame(columns=['address', 'price', 'area', 'rooms', 'year', 'type', 'url', 'price_per_m2', 'lat', 'lon', 'date', 'floor'])
 adr_lst = []
 for url_i in range(len(url_lst)):
     response = requests.get(url_lst[url_i])
@@ -78,6 +78,12 @@ for url_i in range(len(url_lst)):
         type = 'NA'
 
     try:
+        floor = soup.find_all('div', attrs={'data-testid': 'info-floor'})[0].text
+        floor = floor.replace('Etasje', '')
+    except:
+        floor = 'NA'
+
+    try:
         price_per_m2 = int(int(price)/int(area))
     except:
         price_per_m2 = 'NA'
@@ -88,7 +94,7 @@ for url_i in range(len(url_lst)):
     date = time.strftime("%d/%m/%Y")
 
 
-    df = df.append({'address': adr, 'price' : price, 'area' : area, 'rooms' : rooms, 'year' : year, 'type' : type, 'url' : url, 'price_per_m2' : price_per_m2, 'lat' : lat, 'lon' : lon, 'date' : date}, ignore_index=True)
+    df = df.append({'address': adr, 'price' : price, 'area' : area, 'rooms' : rooms, 'year' : year, 'type' : type, 'url' : url, 'price_per_m2' : price_per_m2, 'lat' : lat, 'lon' : lon, 'date' : date, 'floor' : floor}, ignore_index=True)
 
     time.sleep(random.randint(500, 1000)/1000)
 
@@ -147,7 +153,7 @@ df = df[~df['city'].str.contains('Video')]
 df = df[~df['city'].str.contains('Visning')]
 
 # Save df as excel with today's date:
-df.to_excel('price_data_norway_' + str(time.strftime("%Y%m%d")) + '.xlsx', index=False)
+#df.to_excel('price_data_norway_' + str(time.strftime("%Y%m%d")) + '.xlsx', index=False)
 
 '''remove rows with NA in lat and lon'''
 df = df[df['lat'] != 'NA']
@@ -162,7 +168,7 @@ cluster = folium.plugins.MarkerCluster().add_to(map1)
 for (index, row) in df.iterrows():
 
     # Create details to be displayed in popup:
-    iframe = folium.IFrame('Address: ' + str(row['address']) + '<br>' + 'Price: ' + str(row['price']) + ' kr' + '<br>' + 'Price per m2: ' + str(row['price_per_m2']) + ' kr' + '<br>' + 'Area: ' + str(row['area']) + '<br>' + 'Rooms: ' + str(row['rooms']) + '<br>' + 'Year: ' + str(row['year']) + '<br>' + 'Type: ' + str(row['type']) + '<br>' + 'URL: ' + str(row['url']) + '<br>' + 'Date fetched: ' + str(row['date']))
+    iframe = folium.IFrame('Address: ' + str(row['address']) + '<br>' + 'Price: ' + str(row['price']) + ' kr' + '<br>' + 'Price per m2: ' + str(row['price_per_m2']) + ' kr' + '<br>' + 'Area: ' + str(row['area']) + '<br>' + 'Rooms: ' + str(row['rooms']) + '<br>' + 'Year: ' + str(row['year']) + '<br>' + 'Type: ' + str(row['type']) + '<br>' + 'URL: ' + str(row['url']) + '<br>' + 'Date fetched: ' + str(row['date'] + '<br>' + 'Floor: ' + str(row['floor'])))
     
     # Create a popup for each marker on the map:
     popup = folium.Popup(iframe, min_width = 300, max_width = 400, min_height = 300, max_height = 400)
@@ -187,7 +193,7 @@ print(df)
 
 # To do:
 # 3. Add column with number of bathrooms
-# 4. Add story to map
+# 4. Add stories to map - DONE :D
 # 5. Add commute time to Nationaltheatret
 # 6. Add regression model to predict price
 # 7. Add average rent price in the postal code
