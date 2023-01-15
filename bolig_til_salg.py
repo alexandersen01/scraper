@@ -24,6 +24,8 @@ for i in range (1, 5):
 
 df = pd.DataFrame(columns=['address', 'price', 'area', 'rooms', 'year', 'type', 'url', 'price_per_m2'])
 
+counter = 0
+
 for url_i in range(len(url_lst)):
     response = requests.get(url_lst[url_i])
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -73,7 +75,9 @@ for url_i in range(len(url_lst)):
     df = df.append({'address': adr, 'price' : price, 'area' : area, 'rooms' : rooms, 'year' : year, 'type' : type, 'url' : url, 'price_per_m2' : price_per_m2}, ignore_index=True)
 
     time.sleep(random.randint(500, 1000)/1000)
-
+    
+    counter += 1
+    print(counter)
 
 
 '''clean data'''
@@ -135,8 +139,9 @@ print(df)
 
 # To do: 
 # 1. Add date column
-# 2. Add column with number of rooms
+# 2. Add column with number of rooms - done
 # 3. Add column with number of bathrooms
+# 4. add, update and print counter after every iteration of ads fetched
 
 # Overall goal: 
 # Calculate estimated gross yield for each property 
