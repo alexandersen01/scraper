@@ -11,7 +11,7 @@ url_lst = []
 '''creates a list of urls to scrape from'''
 
 ## 1. Scrape real estate adds from Finn.no ##
-for i in range (1, 2):
+for i in range (1, 50):
     response = requests.get(f'https://www.finn.no/realestate/homes/search.html?page={i}&sort=PUBLISHED_DESC')
     soup = BeautifulSoup(response.text, 'html.parser')
 
