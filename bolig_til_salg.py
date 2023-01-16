@@ -28,7 +28,7 @@ counter = 0
 
 '''create empty dataframe with specified columns '''
 
-df = pd.DataFrame(columns=['address', 'price', 'area', 'rooms', 'year', 'type', 'url', 'price_per_m2', 'lat', 'lon', 'date', 'floor'])
+df = pd.DataFrame(columns=['address', 'price', 'area', 'rooms', 'year', 'type', 'url', 'price_per_m2', 'lat', 'lon', 'date', 'floor', 'ownership'])
 adr_lst = []
 for url_i in range(len(url_lst)):
     response = requests.get(url_lst[url_i])
@@ -88,6 +88,12 @@ for url_i in range(len(url_lst)):
     except:
         price_per_m2 = 'NA'
     
+    try:
+        ownership = soup.find_all('div', attrs = {'data-testid' : 'info-ownership-type'})[0].text
+        ownership = ownership.replace('Eieform', '')
+    except:
+        ownership = 'NA'
+
     url = url_lst[url_i]
 
     #add todays date
@@ -106,7 +112,8 @@ for url_i in range(len(url_lst)):
         'lat' : lat, 
         'lon' : lon, 
         'date' : date, 
-        'floor' : floor}, ignore_index=True)
+        'floor' : floor,
+        'ownership' : ownership}, ignore_index=True)
 
     time.sleep(random.randint(500, 1000)/1000)
 
@@ -180,7 +187,7 @@ cluster = folium.plugins.MarkerCluster().add_to(map1)
 for (index, row) in df.iterrows():
 
     # Create details to be displayed in popup:
-    iframe = folium.IFrame('Address: ' + str(row['address']) + '<br>' + 'Price: ' + str(row['price']) + ' kr' + '<br>' + 'Price per m2: ' + str(row['price_per_m2']) + ' kr' + '<br>' + 'Area: ' + str(row['area']) + '<br>' + 'Rooms: ' + str(row['rooms']) + '<br>' + 'Year: ' + str(row['year']) + '<br>' + 'Type: ' + str(row['type']) + '<br>' + 'URL: ' + str(row['url']) + '<br>' + 'Date fetched: ' + str(row['date'] + '<br>' + 'Floor: ' + str(row['floor'])))
+    iframe = folium.IFrame('Address: ' + str(row['address']) + '<br>' + 'Price: ' + str(row['price']) + ' kr' + '<br>' + 'Price per m2: ' + str(row['price_per_m2']) + ' kr' + '<br>' + 'Area: ' + str(row['area']) + '<br>' + 'Rooms: ' + str(row['rooms']) + '<br>' + 'Year: ' + str(row['year']) + '<br>' + 'Type: ' + str(row['type']) + '<br>' + 'URL: ' + str(row['url']) + '<br>' + 'Date fetched: ' + str(row['date'] + '<br>' + 'Floor: ' + str(row['floor'])) + '<br>' + 'Ownership: ' + str(row['Ownership']))
     
     # Create a popup for each marker on the map:
     popup = folium.Popup(iframe, min_width = 300, max_width = 400, min_height = 300, max_height = 400)
