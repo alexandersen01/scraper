@@ -94,7 +94,19 @@ for url_i in range(len(url_lst)):
     date = time.strftime("%d/%m/%Y")
 
 
-    df = df.append({'address': adr, 'price' : price, 'area' : area, 'rooms' : rooms, 'year' : year, 'type' : type, 'url' : url, 'price_per_m2' : price_per_m2, 'lat' : lat, 'lon' : lon, 'date' : date, 'floor' : floor}, ignore_index=True)
+    df = df.append({
+        'address': adr, 
+        'price' : price, 
+        'area' : area, 
+        'rooms' : rooms, 
+        'year' : year, 
+        'type' : type, 
+        'url' : url, 
+        'price_per_m2' : price_per_m2, 
+        'lat' : lat, 
+        'lon' : lon, 
+        'date' : date, 
+        'floor' : floor}, ignore_index=True)
 
     time.sleep(random.randint(500, 1000)/1000)
 
