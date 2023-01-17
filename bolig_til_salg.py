@@ -171,8 +171,7 @@ df['price'] = df['price'].str.replace(' ', '')
 df = df[~df['city'].str.contains('Video')]
 df = df[~df['city'].str.contains('Visning')]
 
-# Save df as excel with today's date:
-#df.to_excel('price_data_norway_' + str(time.strftime("%Y%m%d")) + '.xlsx', index=False)
+
 
 '''remove rows with NA in lat and lon'''
 df = df[df['lat'] != 'NA']
@@ -187,7 +186,17 @@ cluster = folium.plugins.MarkerCluster().add_to(map1)
 for (index, row) in df.iterrows():
 
     # Create details to be displayed in popup:
-    iframe = folium.IFrame('Address: ' + str(row['address']) + '<br>' + 'Price: ' + str(row['price']) + ' kr' + '<br>' + 'Price per m2: ' + str(row['price_per_m2']) + ' kr' + '<br>' + 'Area: ' + str(row['area']) + '<br>' + 'Rooms: ' + str(row['rooms']) + '<br>' + 'Year: ' + str(row['year']) + '<br>' + 'Type: ' + str(row['type']) + '<br>' + 'URL: ' + str(row['url']) + '<br>' + 'Date fetched: ' + str(row['date'] + '<br>' + 'Floor: ' + str(row['floor'])) + '<br>' + 'Ownership: ' + str(row['Ownership']))
+    iframe = folium.IFrame('Address: ' + str(row['address']) + '<br>' + 
+    'Price: ' + str(row['price']) + ' kr' + '<br>' + 
+    'Price per m2: ' + str(row['price_per_m2']) + ' kr' + '<br>' + 
+    'Area: ' + str(row['area']) + '<br>' + 
+    'Rooms: ' + str(row['rooms']) + '<br>' + 
+    'Year: ' + str(row['year']) + '<br>' + 
+    'Type: ' + str(row['type']) + '<br>' + 
+    'URL: ' + str(row['url']) + '<br>' + 
+    'Date fetched: ' + str(row['date']) + '<br>' + 
+    'Floor: ' + str(row['floor']) + '<br>' + 
+    'Ownership: ' + str(row['ownership']))
     
     # Create a popup for each marker on the map:
     popup = folium.Popup(iframe, min_width = 300, max_width = 400, min_height = 300, max_height = 400)
@@ -197,6 +206,9 @@ for (index, row) in df.iterrows():
 
 #save map as html file with today's date
 map1.save('map_' + str(time.strftime("%Y%m%d")) + '.html')
+
+# Save df as excel with today's date:
+df.to_excel('price_data_norway_' + str(time.strftime("%Y%m%d")) + '.xlsx', index=False)
 
 print(df)
 
