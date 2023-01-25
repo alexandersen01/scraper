@@ -49,16 +49,20 @@ df_rentals = pd.DataFrame(columns = ['address', 'price', 'area', 'url', 'lat', '
 #extract data from rental adds
 rent_counter = 0
 for url in range(len(rentals_lst)):
-    response1 = requests.get(rentals_lst[url])
+    try:
+        response1 = requests.get(rentals_lst[url])
+    except:
+        pass
     soup1 = BeautifulSoup(response1.text, 'html.parser')
 
 
-    #try:    
-    adr = soup1.find_all('p', attrs={'class': 'u-caption'})[0].text
-    
+    try:    
+        adr = soup1.find_all('span', attrs={'class': 'pl-4'})[0].text
+    except:
+        adr = 'NA'
 
     try:
-        rent = soup1.find('span', attrs={'class': 'u-t3'}).text.replace(' ', '').replace('kr', '')
+        rent = soup1.find('dd', attrs={'class': 'm-0 font-bold text-28'}).text.replace(' ', '').replace('kr', '')
     except:
         rent = 'NA'
 
