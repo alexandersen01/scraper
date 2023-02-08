@@ -10,8 +10,10 @@ import folium.plugins
 url_lst = []
 rentals_lst = []
 '''creates a list of urls to scrape from'''
-
+print('hehe')
 ## 1. Scrape real estate adds from Finn.no ##
+
+fetched = 0
 for i in range (1, 50):
     response = requests.get(f'https://www.finn.no/realestate/homes/search.html?page={i}&sort=PUBLISHED_DESC')
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -24,8 +26,8 @@ for i in range (1, 50):
         else:
             pass
     time.sleep(random.randint(1000, 2000)/1000)
-
-
+    fetched += 1
+    print(f'Fetched {fetched} pages')
 
 # scrape rental adds from Finn.no
 for i in range (1, 50):
