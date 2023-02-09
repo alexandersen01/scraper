@@ -1,3 +1,4 @@
+import os
 import requests
 import pandas as pd
 import time
@@ -352,6 +353,12 @@ df_rentals.to_excel('rental_data_norway_' + str(time.strftime("%Y%m%d")) + '.xls
 
 print(df)
 print(df_rentals)
+
+#sleep for 10 seconds
+time.sleep(10)
+#make computer go to sleep after code is done running
+os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
+
 
 ## 2. Scrape rental data from Finn.no ##
 
