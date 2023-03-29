@@ -8,6 +8,9 @@ from geopy.geocoders import Nominatim
 import folium
 import folium.plugins
 
+#print current working directory
+print(os.getcwd())
+
 url_lst = []
 rentals_lst = []
 '''creates a list of urls to scrape from'''
@@ -357,18 +360,7 @@ print(df_rentals)
 #sleep for 10 seconds
 time.sleep(10)
 #make computer go to sleep after code is done running
-os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
-
-
-## 2. Scrape rental data from Finn.no ##
-
-
-
-
-
-
-
-
+#os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
 
 # To do:
 # 3. Add column with number of bathrooms
